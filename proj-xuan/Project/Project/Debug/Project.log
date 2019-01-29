@@ -1,0 +1,39 @@
+﻿  main.cpp
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(7): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(75): warning C4305: 'argument': truncation from 'double' to 'TYPE'
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(144): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(151): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(152): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(160): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(166): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(168): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project\project\src\main.cpp(169): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+  Project.vcxproj -> C:\Users\admX\Documents\CS6660\Project\Debug\Project.exe
