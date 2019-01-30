@@ -4,6 +4,9 @@
 
 #include "cyPoint.h"
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 class Cloth {
 public:
 	cy::Point3f* v;				// vertices of the (res+1)x(res+1) cloth	
@@ -11,6 +14,9 @@ public:
 	int res;					// resolution, determines the number of grid per row/col
 
 	Cloth() {};
+
+	cy::Point3f* getV(int i, int j) { return (v+(res + 1)*i+j); }
+
 	void init(int res_in, float w, float h) {
 		res = res_in;
 		v = new cyPoint3f[(res+1)*(res+1)];
@@ -24,6 +30,15 @@ public:
 			}
 		}
 	};
+
+	void move(float t) {
+		float vel = sin(t);
+		for (int i = 0; i < (res + 1);i++ ) 
+			for (int j = 0; j < (res + 1); j++) 
+				getV(i,j)->x +=  0.01*vel;
+		getV(0, 0)->z += 0.001*vel;
+		
+	}
 
 	void fill_v_array(float* v_array) {	// fill the draw array with vertices in triangles
 		int value_per_grid = 3 * 2 * 3;

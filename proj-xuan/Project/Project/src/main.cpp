@@ -9,8 +9,6 @@
 #include "cyGL.h"
 #include "cloth.h"
 
-#define _USE_MATH_DEFINES
-#include <math.h>
 
 #define WINDOW_WIDTH 600
 #define WINDOW_HEIGHT 600
@@ -28,10 +26,9 @@ float bgcolor[3] = { 0.0f,0.0f,0.0f };
 int mainWindow, programID, mouseFirstPressed[2] = { 1,1 };
 int mouseState, mouseButton;
 
-float camDist, xAngle, yAngle;
+float camDist, xAngle, yAngle, t=0;
 Point2f mousePos;
-GLuint MVPID;
-
+GLuint MVPID, VAO, VBO;
 Cloth cloth;
 
 /*GLfloat  v_array[9] = {-0.5f, -0.5f, 0,
@@ -109,7 +106,6 @@ void init(char* filename) {
 	cloth.fill_v_array(v_array);
 
 
-	GLuint VAO, VBO;
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -185,7 +181,21 @@ void display() {
 	glutSwapBuffers();  
 }
 
+/* Idle function called between disply. Update time*/
+
 void idle() {
+
+	t += 0.01;
+	cloth.move(t);
+	cloth.fill_v_array(v_array);
+
+	glBindVertexArray(VAO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(v_array), v_array, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+
+
 	glutSetWindow(mainWindow);
 	glutPostRedisplay();
 }
