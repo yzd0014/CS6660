@@ -71,13 +71,21 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <SourcePath>$(SourcePath)</SourcePath>
-    <IncludePath>C:\Users\admX\OpenGLStuff\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\admX\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <SourcePath>$(SourcePath)</SourcePath>
-    <IncludePath>C:\Users\admX\OpenGLStuff\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\admX\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -89,6 +97,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>opengl32.lib;glu32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -98,6 +107,10 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -113,6 +126,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>opengl32.lib;glu32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -127,6 +141,8 @@
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;freeglut.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Yitong\Desktop\CS 6660 %28Continue%29\Project\proj-xuan\OpenGLStuff\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

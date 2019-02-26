@@ -24,7 +24,7 @@ using namespace::cy;
 enum PERSMODE {PERSP, ORTHO};
 PERSMODE perspectiveMode = PERSP;
 
-float bgcolor[3] = { 0.0f,0.0f,0.0f };
+float bgcolor[3] = { 0.0f,0.0f,1.0f };
 int mainWindow, programID, mouseFirstPressed[2] = { 1,1 };
 int mouseState, mouseButton;
 

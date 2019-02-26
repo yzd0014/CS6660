@@ -263,6 +263,7 @@ namespace eae6320 {
 			o_earliestCollision.collisionTime = i_dt;
 			bool foundCollision_earliest = false;
 			size_t count = i_allGameObjects.size();
+			if (count < 2) return false;
 
 			size_t earliest_A, earliest_B;
 			for (size_t i = 0; i < count - 1; i++) {

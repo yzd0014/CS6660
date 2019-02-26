@@ -92,6 +92,9 @@ public:
 		return result;
 	}
 	EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
+	uint16_t GetVerticesCount() {
+		return m_numberOfVertices;
+	}
 private:
 #if defined( EAE6320_PLATFORM_D3D )
 	//A index buffer for each index of a vertex
