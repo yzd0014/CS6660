@@ -1,39 +1,66 @@
 ﻿  main.cpp
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(7): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(75): warning C4305: 'argument': truncation from 'double' to 'TYPE'
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(7): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(85): warning C4244: '+=': conversion from 'double' to 'TYPE', possible loss of data
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(144): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(106): warning C4018: '<': signed/unsigned mismatch
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(128): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(151): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(129): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(152): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(142): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(160): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(143): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(166): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(168): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(72): warning C4305: 'argument': truncation from 'double' to 'TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project\project\src\main.cpp(169): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(86): warning C4305: '=': truncation from 'double' to 'float'
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(140): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
           with
           [
               TYPE=float
           ]
-  Project.vcxproj -> C:\Users\admX\Documents\CS6660\Project\Debug\Project.exe
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(147): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(148): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(156): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(162): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(164): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(165): warning C4244: '=': conversion from 'int' to 'TYPE', possible loss of data
+          with
+          [
+              TYPE=float
+          ]
+  Project.vcxproj -> C:\Users\admX\Documents\CS6660\project-repo\CS6660\proj-xuan\Project\Debug\Project.exe
