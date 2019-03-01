@@ -82,9 +82,9 @@ void setUniformMVP() {
 
 void initViewMatrices() {
 
-	camDist = 5;
-	xAngle = 0;
-	yAngle = 0;
+	camDist = 3;
+	xAngle = 1.579;
+	yAngle = -0;
 
 	// init & send modelview
 	MVPID = glGetUniformLocation(programID, "MVP");
@@ -185,8 +185,11 @@ void display() {
 
 void idle() {
 
-	t += 0.01;
-	cloth.move(t);
+	//t += 0.01;
+	//cloth.move(t);
+	cloth.computeForces();
+	cloth.computeNextState_smp();
+	cloth.incrementStep();
 	cloth.fill_v_array(v_array);
 
 	glBindVertexArray(VAO);
