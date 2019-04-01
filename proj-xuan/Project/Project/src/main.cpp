@@ -14,13 +14,14 @@
 #define WINDOW_HEIGHT 600
 #define ROTATE_RATE 0.005f
 #define ZOOM_RATE 0.001f
-#define CLOTHRES 10
+#define CLOTHRES 3
 #define CLOTH_WIDTH 1
 #define CLOTH_HEIGHT 1
 
 using namespace::cy;
 enum PERSMODE {PERSP, ORTHO};
 PERSMODE perspectiveMode = PERSP;
+int STOP = 1, INCRE = 0;
 
 float bgcolor[3] = { 0.0f,0.0f,1.0f };
 int mainWindow, programID, mouseFirstPressed[2] = { 1,1 };
@@ -83,8 +84,8 @@ void setUniformMVP() {
 void initViewMatrices() {
 
 	camDist = 3;
-	xAngle = 1.579;
-	yAngle = -0;
+	xAngle = 1.8;
+	yAngle = -0.0;
 
 	// init & send modelview
 	MVPID = glGetUniformLocation(programID, "MVP");
@@ -187,9 +188,17 @@ void idle() {
 
 	//t += 0.01;
 	//cloth.move(t);
-	cloth.computeForces();
-	cloth.computeNextState_smp();
-	cloth.incrementStep();
+	if (!STOP) {
+		cloth.implicitInt();
+		//cloth.explicitInt();
+		cloth.incrementStep();
+	}
+	else if (INCRE) {
+		cloth.implicitInt();
+		cloth.incrementStep();
+		INCRE = 0;
+	}
+	
 	cloth.fill_v_array(v_array);
 
 	glBindVertexArray(VAO);
@@ -212,6 +221,14 @@ void processNormalKeys(unsigned char key, int x, int y) {
 	if (key == 'p') {
 		if (perspectiveMode == ORTHO) perspectiveMode = PERSP;
 		else if (perspectiveMode == PERSP) perspectiveMode = ORTHO;
+	}
+
+	// switch perspective
+	if (key == 's') {
+		STOP = 1 - STOP;
+	}
+	if (key == 'i') {
+		INCRE = 1;
 	}
 }
 
