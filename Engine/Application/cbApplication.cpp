@@ -178,7 +178,7 @@ void eae6320::Application::cbApplication::UpdateUntilExit()
 				// Regardless of how far the simulation is behind
 				// frames need to be rendered (and operating system messages handled)
 				// or the application will stop responding
-				&& ( simulationUpdateCount_thisIteration < maxSimulationUpdateCountWithoutRendering ) )
+				&& ( simulationUpdateCount_thisIteration < maxSimulationUpdateCountWithoutRendering ))
 			{
 				UpdateSimulationBasedOnTime( secondCount_perSimulationUpdate );
 				++simulationUpdateCount_thisIteration;

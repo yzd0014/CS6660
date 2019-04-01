@@ -27,8 +27,7 @@ void eae6320::GameCommon::Camera::UpdateState(const float i_secondCountToIntegra
 	
 	int mouseX, mouseY;
 	UserInput::GetMouseMoveDistanceInDeltaTime(&mouseX, &mouseY);
-	//reset velocity before update velocity
-	m_State.velocity = Math::sVector(0, 0, 0);
+	
 	m_State.axis_X_velocity = 0.0f;
 	m_State.axis_Y_velocity = 0.0f;
 	m_State.axis_Z_velocity = 0.0f;
@@ -62,6 +61,9 @@ eae6320::Math::cMatrix_transformation eae6320::GameCommon::Camera::GetCameraToPr
 }
 
 void eae6320::GameCommon::Camera::UpdateCameraBasedOnInput() {
+	//reset velocity before update velocity
+	m_State.velocity = Math::sVector(0, 0, 0);
+	
 	Math::cMatrix_transformation localToWorldMat = Math::cMatrix_transformation::cMatrix_transformation(m_State.orientation, m_State.position);
 	Math::sVector forwardVector = localToWorldMat.GetBackDirection();
 	forwardVector.Normalize();

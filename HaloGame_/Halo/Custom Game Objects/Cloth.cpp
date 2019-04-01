@@ -1,90 +1,123 @@
 #include "Cloth.h"
 #include "Engine/UserOutput/UserOutput.h"
 #include "Engine//Math/Functions.h"
+#include "Eigen/Dense"
+
+using namespace Eigen;
+
 void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
-	float k = 2000;
-	int clothResolution = 10;
+	float k = 5000;
 	Mesh* clothMesh = Mesh::s_manager.Get(GetMesh());
-	Math::sVector* displacement = new Math::sVector[clothMesh->GetVerticesCount()];
+	int edgeCount = (2 * clothResolution + 1)*clothResolution + clothResolution;
+	/*
+	Math::sVector topPos[11];
+	for (int i = 0; i < 11; i++) {
+		topPos[i].x = clothMesh->m_pVertexDataInRAM[i].x;
+		topPos[i].y = clothMesh->m_pVertexDataInRAM[i].y;
+		topPos[i].z = clothMesh->m_pVertexDataInRAM[i].z;
+	}
+	*/
+	MatrixXd m(1, verticeCount);
+	MatrixXd M(verticeCount, verticeCount);
+	M.setZero();
+	for (int i = 0; i < verticeCount; i++) {
+		m(0, i) = 1;
+		M(i, i) = m(0, i);
+	}
 
-	Math::sVector leftPos;
-	leftPos.x = clothMesh->m_pVertexDataInRAM[0].x;
-	leftPos.y = clothMesh->m_pVertexDataInRAM[0].y;
-	leftPos.z = clothMesh->m_pVertexDataInRAM[0].z;
-	Math::sVector rightPos;
-	rightPos.x = clothMesh->m_pVertexDataInRAM[clothResolution].x;
-	rightPos.y = clothMesh->m_pVertexDataInRAM[clothResolution].y;
-	rightPos.z = clothMesh->m_pVertexDataInRAM[clothResolution].z;
-
-	for (int16_t i = 0; i < clothMesh->GetVerticesCount(); i++) {
-		int16_t up, down, left, right;
-		up = i - (clothResolution + 1);
-		down = i + (clothResolution + 1);
-		left = i - 1;
-		right = i + 1;
-
-		Math::sVector accel(0.0f, 0.0f, 0.0f);
-		if (up >= 0) {//accumlate from up
-			Math::sVector distance;
-			distance.x = clothMesh->m_pVertexDataInRAM[up].x - clothMesh->m_pVertexDataInRAM[i].x;
-			distance.y = clothMesh->m_pVertexDataInRAM[up].y - clothMesh->m_pVertexDataInRAM[i].y;
-			distance.z = clothMesh->m_pVertexDataInRAM[up].z - clothMesh->m_pVertexDataInRAM[i].z;
-
-			accel = accel + k * (distance.GetLength() - 1) * distance.GetNormalized();
+	MatrixXd x(3, verticeCount);
+	MatrixXd* A = new MatrixXd[edgeCount];
+	MatrixXd L(verticeCount, verticeCount);
+	L.setZero();
+	MatrixXd J(edgeCount, verticeCount);
+	J.setZero();
+	for (int i = 0; i < edgeCount; i++) {
+		//generate A
+		int row = i / (2 * clothResolution + 1);
+		int	remander = i % (2 * clothResolution + 1);
+		if (remander < clothResolution) {
+			int vertexIndex = row * (clothResolution + 1) + remander;
+			A[i].resize(verticeCount, 1);
+			for (int j = 0; j < verticeCount; j++) {
+				A[i](j, 0) = 0;
+			}
+			A[i](vertexIndex, 0) = -1;
+			A[i](vertexIndex + 1, 0) = 1;
 		}
-		if (down <= (clothResolution + 1) * (clothResolution + 1) - 1) {//accumlate from down
-			Math::sVector distance;
-			distance.x = clothMesh->m_pVertexDataInRAM[down].x - clothMesh->m_pVertexDataInRAM[i].x;
-			distance.y = clothMesh->m_pVertexDataInRAM[down].y - clothMesh->m_pVertexDataInRAM[i].y;
-			distance.z = clothMesh->m_pVertexDataInRAM[down].z - clothMesh->m_pVertexDataInRAM[i].z;
-
-			accel = accel + k * (distance.GetLength() - 1) * distance.GetNormalized();
+		else {
+			int vertexIndex = row * (clothResolution + 1) + remander - clothResolution;
+			A[i].resize(verticeCount, 1);
+			for (int j = 0; j < verticeCount; j++) {
+				A[i](j, 0) = 0;
+			}
+			A[i](vertexIndex, 0) = 1;
+			A[i](vertexIndex + clothResolution + 1, 0) = -1;
 		}
-		if (i % (clothResolution + 1) > 0) {//accumlate from left 
-			Math::sVector distance;
-			distance.x = clothMesh->m_pVertexDataInRAM[left].x - clothMesh->m_pVertexDataInRAM[i].x;
-			distance.y = clothMesh->m_pVertexDataInRAM[left].y - clothMesh->m_pVertexDataInRAM[i].y;
-			distance.z = clothMesh->m_pVertexDataInRAM[left].z - clothMesh->m_pVertexDataInRAM[i].z;
-			//Math::sVector tempAccel = k * (distance.GetLength() - 1) * distance.GetNormalized();
-			accel = accel + k * (distance.GetLength() - 1) * distance.GetNormalized();
-			//UserOutput::DebugPrint("acceleration: %f", tempAccel.GetLength());
-		}
-		if (i % (clothResolution + 1) < clothResolution) {//accumlate from right
-			Math::sVector distance;
-			distance.x = clothMesh->m_pVertexDataInRAM[right].x - clothMesh->m_pVertexDataInRAM[i].x;
-			distance.y = clothMesh->m_pVertexDataInRAM[right].y - clothMesh->m_pVertexDataInRAM[i].y;
-			distance.z = clothMesh->m_pVertexDataInRAM[right].z - clothMesh->m_pVertexDataInRAM[i].z;
 
-			accel = accel + k * (distance.GetLength() - 1) * distance.GetNormalized();
+		//generate J from S
+		MatrixXd Si;
+		Si.resize(edgeCount, 1);
+		Si.setZero();
+		Si(i, 0) = 1;
+		J = J + k * Si * A[i].transpose();
+
+		//get L
+		L = L + k * A[i] * A[i].transpose();
+	}
+	Vector3d g(0.0f, 1.0f, 0.0f);
+	MatrixXd d(3, edgeCount);
+	MatrixXd y(3, verticeCount);
+	for (int i = 0; i < verticeCount; i++) {
+		//get y
+		y(0, i) = 2 * clothMesh->m_pVertexDataInRAM[i].x - lastFramePos[i].x;
+		y(1, i) = 2 * clothMesh->m_pVertexDataInRAM[i].y - lastFramePos[i].y;
+		y(2, i) = 2 * clothMesh->m_pVertexDataInRAM[i].z - lastFramePos[i].z;
+
+		lastFramePos[i].x = clothMesh->m_pVertexDataInRAM[i].x;
+		lastFramePos[i].y = clothMesh->m_pVertexDataInRAM[i].y;
+		lastFramePos[i].z = clothMesh->m_pVertexDataInRAM[i].z;
+	}
+	
+	//projective dynamics
+	x = y;
+	for (int k = 0; k < 2; k++) {
+		for (int i = 0; i < edgeCount; i++) {
+			Math::sVector restVec;
+			restVec.x = (float)(x * A[i])(0, 0);
+			restVec.y = (float)(x * A[i])(1, 0);
+			restVec.z = (float)(x * A[i])(2, 0);
+			restVec.Normalize();
+			d(0, i) = restVec.x;
+			d(1, i) = restVec.y;
+			d(2, i) = restVec.z;
 		}
 		
-		Math::sVector gravity(0.0f, -9.81f, 0.0f);
-		accel = accel + gravity;
-		/*
-		if (Math::floatEqual(accel.GetLength(), 0.0f)) {
-			accel = Math::sVector(0.0f, 0.0f, 0.0f);
-		}
-		*/
-		//UserOutput::DebugPrint("acceleration %d: %f", i, accel.GetLength());
-		//update velocity
-		verticeVelocity[i] = verticeVelocity[i] + i_secondCountToIntegrate * accel;
-		//cache displacement
-		displacement[i] = i_secondCountToIntegrate * verticeVelocity[i];
+		x = (d * J + (1 / pow(i_secondCountToIntegrate, 2))*y*M - g * m)*((1 / pow(i_secondCountToIntegrate, 2))*M + L).inverse();
 	}
-	for (uint16_t i = 0; i < clothMesh->GetVerticesCount(); i++) {
-		clothMesh->m_pVertexDataInRAM[i].x = clothMesh->m_pVertexDataInRAM[i].x + displacement[i].x;
-		clothMesh->m_pVertexDataInRAM[i].y = clothMesh->m_pVertexDataInRAM[i].y + displacement[i].y;
-		clothMesh->m_pVertexDataInRAM[i].z = clothMesh->m_pVertexDataInRAM[i].z + displacement[i].z;
+	delete[] A;
+
+	for (int i = 0; i < verticeCount; i++) {
+		clothMesh->m_pVertexDataInRAM[i].x = (float)x(0, i);
+		clothMesh->m_pVertexDataInRAM[i].y = (float)x(1, i);
+		clothMesh->m_pVertexDataInRAM[i].z = (float)x(2, i);
 	}
-	delete[] displacement;
-	clothMesh->m_pVertexDataInRAM[0].x = leftPos.x;
-	clothMesh->m_pVertexDataInRAM[0].y = leftPos.y;
-	clothMesh->m_pVertexDataInRAM[0].z = leftPos.z;
+	//UserOutput::DebugPrint("%f, %f, %f", clothMesh->m_pVertexDataInRAM[6].y, clothMesh->m_pVertexDataInRAM[7].y, clothMesh->m_pVertexDataInRAM[8].y);
+	/*
+	for (int i = 0; i < 11; i++) {
+		clothMesh->m_pVertexDataInRAM[i].x = topPos[i].x;
+		clothMesh->m_pVertexDataInRAM[i].y = topPos[i].y;
+		clothMesh->m_pVertexDataInRAM[i].z = topPos[i].z;
+	}
+	*/
+	
+	clothMesh->m_pVertexDataInRAM[0].x = fixedPos[0].x;
+	clothMesh->m_pVertexDataInRAM[0].y = fixedPos[0].y;
+	clothMesh->m_pVertexDataInRAM[0].z = fixedPos[0].z;
 
-	clothMesh->m_pVertexDataInRAM[clothResolution].x = rightPos.x;
-	clothMesh->m_pVertexDataInRAM[clothResolution].y = rightPos.y;
-	clothMesh->m_pVertexDataInRAM[clothResolution].z = rightPos.z;
-
+	clothMesh->m_pVertexDataInRAM[clothResolution].x = fixedPos[1].x;
+	clothMesh->m_pVertexDataInRAM[clothResolution].y = fixedPos[1].y;
+	clothMesh->m_pVertexDataInRAM[clothResolution].z = fixedPos[1].z;
+	
 	Mesh::s_manager.Get(GetMesh())->updateVertexBuffer = true;
 	
 }

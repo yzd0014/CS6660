@@ -90,22 +90,6 @@ eae6320::cResult eae6320::cHalo::Initialize()
 		objState.position = Math::sVector(0.0f, 6.0f, 0.0f);
 		GameCommon::GameObject * pGameObject = new Cloth(pEffect_white, mesh_cloth, objState);
 		gameOjbectsWithoutCollider.push_back(pGameObject);
-		
-		//rotate cloth to make it parallel to ground
-		Math::cMatrix_transformation rotMatrix(Math::cQuaternion(Math::ConvertDegreesToRadians(-90), Math::sVector(1, 0, 0)), Math::sVector(0.0f, 0.0f, 0.0f));
-		Mesh* clothMesh = Mesh::s_manager.Get(pGameObject->GetMesh());
-		for (uint16_t i = 0; i < clothMesh->GetVerticesCount(); i++) {
-			Math::sVector oldPos, newPos;
-			oldPos.x = clothMesh->m_pVertexDataInRAM[i].x;
-			oldPos.y = clothMesh->m_pVertexDataInRAM[i].y;
-			oldPos.z = clothMesh->m_pVertexDataInRAM[i].z;
-			newPos = rotMatrix * oldPos;
-			
-			clothMesh->m_pVertexDataInRAM[i].x = newPos.x;
-			clothMesh->m_pVertexDataInRAM[i].y = newPos.y;
-			clothMesh->m_pVertexDataInRAM[i].z = newPos.z;
-		}
-		clothMesh->updateVertexBuffer = true;
 	}
 
 	return Results::Success;
