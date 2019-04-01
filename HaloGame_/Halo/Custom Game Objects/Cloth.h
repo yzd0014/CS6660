@@ -32,15 +32,21 @@ namespace eae6320 {
 			}
 			verticeCount = clothMesh->GetVerticesCount();
 			clothResolution = (int)sqrt(verticeCount) - 1;
-			fixedPos[0] = Math::sVector(clothMesh->m_pVertexDataInRAM[0].x, clothMesh->m_pVertexDataInRAM[0].y, clothMesh->m_pVertexDataInRAM[0].z);
-			fixedPos[1] = Math::sVector(clothMesh->m_pVertexDataInRAM[clothResolution].x, clothMesh->m_pVertexDataInRAM[clothResolution].y, clothMesh->m_pVertexDataInRAM[clothResolution].z);
+
+			//fixedPos[0] = Math::sVector(clothMesh->m_pVertexDataInRAM[0].x, clothMesh->m_pVertexDataInRAM[0].y, clothMesh->m_pVertexDataInRAM[0].z);
+			//fixedPos[1] = Math::sVector(clothMesh->m_pVertexDataInRAM[clothResolution].x, clothMesh->m_pVertexDataInRAM[clothResolution].y, clothMesh->m_pVertexDataInRAM[clothResolution].z);
+			for (int i = 0; i < clothResolution+1; i++) {
+				fixedPos[i].x = clothMesh->m_pVertexDataInRAM[i].x;
+				fixedPos[i].y = clothMesh->m_pVertexDataInRAM[i].y;
+				fixedPos[i].z = clothMesh->m_pVertexDataInRAM[i].z;
+			}
 		}
 		void EventTick(const float i_secondCountToIntegrate) override;
 		~Cloth() {
 			delete[] lastFramePos;
 		}
 		Math::sVector* lastFramePos;
-		Math::sVector fixedPos[2];
+		Math::sVector fixedPos[11];
 	private:
 		float totalElapsedSimulationTime;
 		int verticeCount;

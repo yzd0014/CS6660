@@ -9,14 +9,6 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 	float k = 5000;
 	Mesh* clothMesh = Mesh::s_manager.Get(GetMesh());
 	int edgeCount = (2 * clothResolution + 1)*clothResolution + clothResolution;
-	/*
-	Math::sVector topPos[11];
-	for (int i = 0; i < 11; i++) {
-		topPos[i].x = clothMesh->m_pVertexDataInRAM[i].x;
-		topPos[i].y = clothMesh->m_pVertexDataInRAM[i].y;
-		topPos[i].z = clothMesh->m_pVertexDataInRAM[i].z;
-	}
-	*/
 	MatrixXd m(1, verticeCount);
 	MatrixXd M(verticeCount, verticeCount);
 	M.setZero();
@@ -102,21 +94,12 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 		clothMesh->m_pVertexDataInRAM[i].z = (float)x(2, i);
 	}
 	//UserOutput::DebugPrint("%f, %f, %f", clothMesh->m_pVertexDataInRAM[6].y, clothMesh->m_pVertexDataInRAM[7].y, clothMesh->m_pVertexDataInRAM[8].y);
-	/*
-	for (int i = 0; i < 11; i++) {
-		clothMesh->m_pVertexDataInRAM[i].x = topPos[i].x;
-		clothMesh->m_pVertexDataInRAM[i].y = topPos[i].y;
-		clothMesh->m_pVertexDataInRAM[i].z = topPos[i].z;
-	}
-	*/
 	
-	clothMesh->m_pVertexDataInRAM[0].x = fixedPos[0].x;
-	clothMesh->m_pVertexDataInRAM[0].y = fixedPos[0].y;
-	clothMesh->m_pVertexDataInRAM[0].z = fixedPos[0].z;
-
-	clothMesh->m_pVertexDataInRAM[clothResolution].x = fixedPos[1].x;
-	clothMesh->m_pVertexDataInRAM[clothResolution].y = fixedPos[1].y;
-	clothMesh->m_pVertexDataInRAM[clothResolution].z = fixedPos[1].z;
+	for (int i = 0; i < clothResolution + 1; i++) {
+		clothMesh->m_pVertexDataInRAM[i].x = fixedPos[i].x;
+		clothMesh->m_pVertexDataInRAM[i].y = fixedPos[i].y;
+		clothMesh->m_pVertexDataInRAM[i].z = fixedPos[i].z;
+	}
 	
 	Mesh::s_manager.Get(GetMesh())->updateVertexBuffer = true;
 	
