@@ -116,6 +116,14 @@ namespace eae6320
 
 			// Inheritable Implementation
 			//===========================
+			// The application's simulation is always updated in fixed increments of time
+			// to keep the simulation stable and predictable.
+			// This function determines how frequently the simulation is updated
+			// (the simulation will be updated every n seconds, where n is the value returned by this function).
+			// The default value is a relatively large amount of time;
+			// you may want to experiement with smaller values in your application
+			// and observe the change in responsiveness or simulation accuracy.
+			virtual float GetSimulationUpdatePeriod_inSeconds() const { return 1.0f / 60.0f; }
 
 		private:
 
@@ -129,15 +137,7 @@ namespace eae6320
 				o_width = 512;
 				o_height = 512;
 			}
-
-			// The application's simulation is always updated in fixed increments of time
-			// to keep the simulation stable and predictable.
-			// This function determines how frequently the simulation is updated
-			// (the simulation will be updated every n seconds, where n is the value returned by this function).
-			// The default value is a relatively large amount of time;
-			// you may want to experiement with smaller values in your application
-			// and observe the change in responsiveness or simulation accuracy.
-			virtual float GetSimulationUpdatePeriod_inSeconds() const { return 1.0f / 60.0f; }
+			
 
 			// Run
 			//----

@@ -54,7 +54,7 @@ eae6320::cResult eae6320::cHalo::Initialize()
 	if (!(result = Mesh::s_manager.Load("data/meshes/square_plane.mesh", mesh_plane))) {
 		EAE6320_ASSERT(false);
 	}
-	if (!(result = Mesh::s_manager.Load("data/meshes/cloth2x2.mesh", mesh_cloth))) {
+	if (!(result = Mesh::s_manager.Load("data/meshes/cloth10x10.mesh", mesh_cloth))) {
 		EAE6320_ASSERT(false);
 	}
 	masterMeshArray.push_back(mesh_plane);
@@ -88,8 +88,8 @@ eae6320::cResult eae6320::cHalo::Initialize()
 	{
 		Physics::sRigidBodyState objState;
 		objState.position = Math::sVector(0.0f, 6.0f, 0.0f);
-		GameCommon::GameObject * pGameObject = new Cloth(pEffect_white, mesh_cloth, objState);
-		gameOjbectsWithoutCollider.push_back(pGameObject);
+		GameCommon::GameObject * pGameObject = new Cloth(pEffect_white, mesh_cloth, objState, GetSimulationUpdatePeriod_inSeconds());
+		gameOjbectsWithoutCollider.push_back(pGameObject);	
 	}
 
 	return Results::Success;

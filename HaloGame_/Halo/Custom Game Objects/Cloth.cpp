@@ -1,64 +1,10 @@
 #include "Cloth.h"
 #include "Engine/UserOutput/UserOutput.h"
 #include "Engine//Math/Functions.h"
-#include "Eigen/Dense"
 
-using namespace Eigen;
 
 void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
-	float k = 5000;
 	Mesh* clothMesh = Mesh::s_manager.Get(GetMesh());
-	int edgeCount = (2 * clothResolution + 1)*clothResolution + clothResolution;
-	MatrixXd m(1, verticeCount);
-	MatrixXd M(verticeCount, verticeCount);
-	M.setZero();
-	for (int i = 0; i < verticeCount; i++) {
-		m(0, i) = 1;
-		M(i, i) = m(0, i);
-	}
-
-	MatrixXd x(3, verticeCount);
-	MatrixXd* A = new MatrixXd[edgeCount];
-	MatrixXd L(verticeCount, verticeCount);
-	L.setZero();
-	MatrixXd J(edgeCount, verticeCount);
-	J.setZero();
-	for (int i = 0; i < edgeCount; i++) {
-		//generate A
-		int row = i / (2 * clothResolution + 1);
-		int	remander = i % (2 * clothResolution + 1);
-		if (remander < clothResolution) {
-			int vertexIndex = row * (clothResolution + 1) + remander;
-			A[i].resize(verticeCount, 1);
-			for (int j = 0; j < verticeCount; j++) {
-				A[i](j, 0) = 0;
-			}
-			A[i](vertexIndex, 0) = -1;
-			A[i](vertexIndex + 1, 0) = 1;
-		}
-		else {
-			int vertexIndex = row * (clothResolution + 1) + remander - clothResolution;
-			A[i].resize(verticeCount, 1);
-			for (int j = 0; j < verticeCount; j++) {
-				A[i](j, 0) = 0;
-			}
-			A[i](vertexIndex, 0) = 1;
-			A[i](vertexIndex + clothResolution + 1, 0) = -1;
-		}
-
-		//generate J from S
-		MatrixXd Si;
-		Si.resize(edgeCount, 1);
-		Si.setZero();
-		Si(i, 0) = 1;
-		J = J + k * Si * A[i].transpose();
-
-		//get L
-		L = L + k * A[i] * A[i].transpose();
-	}
-	Vector3d g(0.0f, 1.0f, 0.0f);
-	MatrixXd d(3, edgeCount);
-	MatrixXd y(3, verticeCount);
 	for (int i = 0; i < verticeCount; i++) {
 		//get y
 		y(0, i) = 2 * clothMesh->m_pVertexDataInRAM[i].x - lastFramePos[i].x;
@@ -72,7 +18,7 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 	
 	//projective dynamics
 	x = y;
-	for (int k = 0; k < 2; k++) {
+	for (int k = 0; k < 10; k++) {
 		for (int i = 0; i < edgeCount; i++) {
 			Math::sVector restVec;
 			restVec.x = (float)(x * A[i])(0, 0);
@@ -84,9 +30,8 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 			d(2, i) = restVec.z;
 		}
 		
-		x = (d * J + (1 / pow(i_secondCountToIntegrate, 2))*y*M - g * m)*((1 / pow(i_secondCountToIntegrate, 2))*M + L).inverse();
+		x = (d * J + (1 / pow(h, 2)) *y*M - gxm)*matInverse;
 	}
-	delete[] A;
 
 	for (int i = 0; i < verticeCount; i++) {
 		clothMesh->m_pVertexDataInRAM[i].x = (float)x(0, i);
@@ -95,7 +40,7 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 	}
 	//UserOutput::DebugPrint("%f, %f, %f", clothMesh->m_pVertexDataInRAM[6].y, clothMesh->m_pVertexDataInRAM[7].y, clothMesh->m_pVertexDataInRAM[8].y);
 	
-	for (int i = 0; i < clothResolution + 1; i++) {
+	for (int i = 0; i < clothResolution + 1; i+= clothResolution) {
 		clothMesh->m_pVertexDataInRAM[i].x = fixedPos[i].x;
 		clothMesh->m_pVertexDataInRAM[i].y = fixedPos[i].y;
 		clothMesh->m_pVertexDataInRAM[i].z = fixedPos[i].z;
