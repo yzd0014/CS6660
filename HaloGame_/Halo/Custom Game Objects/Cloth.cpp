@@ -30,7 +30,7 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 			d(2, i) = restVec.z;
 		}
 		
-		x = (d * J + (1 / pow(h, 2)) *y*M - gxm)*matInverse;
+		x = (d * J + (1 / pow(h, 2)) *y*M + restMat)*matInverse;
 	}
 
 	for (int i = 0; i < verticeCount; i++) {
@@ -39,12 +39,6 @@ void eae6320::Cloth::EventTick(const float i_secondCountToIntegrate) {
 		clothMesh->m_pVertexDataInRAM[i].z = (float)x(2, i);
 	}
 	//UserOutput::DebugPrint("%f, %f, %f", clothMesh->m_pVertexDataInRAM[6].y, clothMesh->m_pVertexDataInRAM[7].y, clothMesh->m_pVertexDataInRAM[8].y);
-	
-	for (int i = 0; i < clothResolution + 1; i+= clothResolution) {
-		clothMesh->m_pVertexDataInRAM[i].x = fixedPos[i].x;
-		clothMesh->m_pVertexDataInRAM[i].y = fixedPos[i].y;
-		clothMesh->m_pVertexDataInRAM[i].z = fixedPos[i].z;
-	}
 	
 	Mesh::s_manager.Get(GetMesh())->updateVertexBuffer = true;
 	

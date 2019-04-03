@@ -40,18 +40,29 @@ namespace eae6320 {
 			}
 			//fixedPos[0] = Math::sVector(clothMesh->m_pVertexDataInRAM[0].x, clothMesh->m_pVertexDataInRAM[0].y, clothMesh->m_pVertexDataInRAM[0].z);
 			//fixedPos[1] = Math::sVector(clothMesh->m_pVertexDataInRAM[clothResolution].x, clothMesh->m_pVertexDataInRAM[clothResolution].y, clothMesh->m_pVertexDataInRAM[clothResolution].z);
-			for (int i = 0; i < clothResolution+1; i+= clothResolution) {
-				fixedPos[i].x = clothMesh->m_pVertexDataInRAM[i].x;
-				fixedPos[i].y = clothMesh->m_pVertexDataInRAM[i].y;
-				fixedPos[i].z = clothMesh->m_pVertexDataInRAM[i].z;
-			}
+			
+			
 
 			//precomput all matrix
 			float k = 10000;
+			MatrixXd t(3, verticeCount);
+			MatrixXd P(verticeCount, verticeCount);
+			t.setZero();
+			P.setZero();
+			for (int i = 0; i < clothResolution + 1; i += clothResolution) {
+				t(0, i) = clothMesh->m_pVertexDataInRAM[i].x;
+				t(1, i) = clothMesh->m_pVertexDataInRAM[i].y;
+				t(2, i) = clothMesh->m_pVertexDataInRAM[i].z;
+
+				MatrixXd S(verticeCount, 1);
+				S.setZero();
+				S(i, 0) = 1;
+				P = P + k * S * S.transpose();
+			}
+
 			MatrixXd m(1, verticeCount);
 
 			matInverse.resize(verticeCount, verticeCount);
-			gxm.resize(3, verticeCount);
 			d.resize(3, edgeCount);
 			J.resize(edgeCount, verticeCount);
 			x.resize(3, verticeCount);
@@ -101,10 +112,10 @@ namespace eae6320 {
 				//get L
 				L = L + k * A[i] * A[i].transpose();
 			}
-			matInverse = ((1 / pow(h, 2))*M + L).inverse();
+			matInverse = ((1 / pow(h, 2))*M + L + P).inverse();
 			
 			Vector3d g(0.0f, 5.0f, 0.0f);
-			gxm = g * m;
+			restMat = t * P - g * m;
 		}
 		void EventTick(const float i_secondCountToIntegrate) override;
 		~Cloth() {
@@ -120,7 +131,7 @@ namespace eae6320 {
 		int clothResolution;
 		int edgeCount;
 		MatrixXd matInverse;
-		MatrixXd gxm;
+		MatrixXd restMat;
 		MatrixXd d;
 		MatrixXd J;
 		MatrixXd x;
