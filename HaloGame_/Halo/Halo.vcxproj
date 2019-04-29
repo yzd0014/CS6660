@@ -35,6 +35,7 @@
     <ClInclude Include="Custom Game Objects\HomingCube.h" />
     <ClInclude Include="Custom Game Objects\MoveableCube.h" />
     <ClInclude Include="Custom Game Objects\Player.h" />
+    <ClInclude Include="Custom Game Objects\Tri.h" />
     <ClInclude Include="Resource Files\Resource.h" />
     <ClInclude Include="Resource Files\targetver.h" />
   </ItemGroup>

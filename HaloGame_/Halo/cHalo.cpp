@@ -20,6 +20,7 @@
 #include "Custom Game Objects/Player.h"
 #include "Custom Game Objects/Boss.h"
 #include "Custom Game Objects/Cloth.h"
+#include "Custom Game Objects/Tri.h"
 
 // Inherited Implementation
 //=========================
@@ -44,21 +45,22 @@ void eae6320::cHalo::UpdateBasedOnInput()
 eae6320::cResult eae6320::cHalo::Initialize()
 {
 	//initialize camera 
-	mainCamera.Initialize(Math::sVector(0.0f, 5.0f, 30.0f), Math::cQuaternion(), Math::ConvertDegreesToRadians(45), 1.0f, 0.1f, 500.0f);
+	mainCamera.Initialize(Math::sVector(0.0f, 5.0f, 15.0f), Math::cQuaternion(), Math::ConvertDegreesToRadians(45), 1.0f, 0.1f, 500.0f);
 	
 	//create two meshes 	
 	eae6320::Assets::cHandle<Mesh> mesh_plane;
-	eae6320::Assets::cHandle<Mesh> mesh_cloth;
+	//eae6320::Assets::cHandle<Mesh> mesh_cloth;
+	eae6320::Assets::cHandle<Mesh> mesh_tri;
 
 	auto result = eae6320::Results::Success;
 	if (!(result = Mesh::s_manager.Load("data/meshes/square_plane.mesh", mesh_plane))) {
 		EAE6320_ASSERT(false);
 	}
-	if (!(result = Mesh::s_manager.Load("data/meshes/cloth10x10.mesh", mesh_cloth))) {
+	if (!(result = Mesh::s_manager.Load("data/meshes/tri.mesh", mesh_tri))) {
 		EAE6320_ASSERT(false);
 	}
 	masterMeshArray.push_back(mesh_plane);
-	masterMeshArray.push_back(mesh_cloth);
+	masterMeshArray.push_back(mesh_tri);
 	
 	//create two effect
 	Effect* pEffect_white;
@@ -76,7 +78,7 @@ eae6320::cResult eae6320::cHalo::Initialize()
 	
 	{
 		Physics::sRigidBodyState objState;
-		objState.position = Math::sVector(0.0f, 0.0f, 20.0f);
+		objState.position = Math::sVector(0.0f, 0.0f, 0.0f);
 		objState.boundingBox.center = Math::sVector(0.0f, 0.0f, 0.0f);
 		objState.boundingBox.extends = Math::sVector(4.0f, 0.0f, 4.0f);
 		GameCommon::GameObject * pGameObject = new GameCommon::GameObject(pEffect_white, mesh_plane, objState);
@@ -84,11 +86,11 @@ eae6320::cResult eae6320::cHalo::Initialize()
 		masterGameObjectArr.push_back(pGameObject);
 	}
 	
-	//add cloth
+	//add tri
 	{
 		Physics::sRigidBodyState objState;
-		objState.position = Math::sVector(0.0f, 6.0f, 0.0f);
-		GameCommon::GameObject * pGameObject = new Cloth(pEffect_white, mesh_cloth, objState, GetSimulationUpdatePeriod_inSeconds());
+		objState.position = Math::sVector(0.0f, 2.0f, 0.0f);
+		GameCommon::GameObject * pGameObject = new Tri(pEffect_white, mesh_tri, objState, GetSimulationUpdatePeriod_inSeconds());
 		gameOjbectsWithoutCollider.push_back(pGameObject);	
 	}
 

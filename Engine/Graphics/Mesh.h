@@ -37,6 +37,7 @@ public:
 	//using Handle = eae6320::Assets::cHandle<Mesh>;
 	static eae6320::Assets::cManager<Mesh> s_manager;
 	eae6320::Graphics::VertexFormats::sMesh * m_pVertexDataInRAM;
+	uint16_t * m_pIndexDataInRAM;
 	bool updateVertexBuffer = false;
 
 	EAE6320_ASSETS_DECLAREREFERENCECOUNTINGFUNCTIONS()
@@ -74,6 +75,10 @@ public:
 		//extract index array
 		uint16_t * indexData = reinterpret_cast<uint16_t*>(currentOffset);
 		currentOffset += sizeof(uint16_t) * indexCount;
+		pMesh->m_pIndexDataInRAM = new uint16_t[indexCount];
+		for (uint16_t i = 0; i < indexCount; i++) {
+			pMesh->m_pIndexDataInRAM[i] = indexData[i];//log index data at CPU's ram
+		}
 
 		if (currentOffset != finalOffset) {
 			return eae6320::Results::Failure;
@@ -94,6 +99,9 @@ public:
 	EAE6320_ASSETS_DECLAREDELETEDREFERENCECOUNTEDFUNCTIONS(Mesh)
 	uint16_t GetVerticesCount() {
 		return m_numberOfVertices;
+	}
+	uint16_t GetIndicesCount() {
+		return m_numberOfIndices;
 	}
 private:
 #if defined( EAE6320_PLATFORM_D3D )

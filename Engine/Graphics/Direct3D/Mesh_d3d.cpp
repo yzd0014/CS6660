@@ -236,8 +236,12 @@ eae6320::cResult Mesh::CleanUp(eae6320::cResult result) {
 		m_indexBuffer = nullptr;
 	}
 	if (m_pVertexDataInRAM != nullptr) {
-		delete m_pVertexDataInRAM;
+		delete[] m_pVertexDataInRAM;
 		m_pVertexDataInRAM = nullptr;
+	}
+	if (m_pIndexDataInRAM != nullptr) {
+		delete[] m_pIndexDataInRAM;
+		m_pIndexDataInRAM = nullptr;
 	}
 
 	return result;
