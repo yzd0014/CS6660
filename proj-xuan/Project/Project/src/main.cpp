@@ -14,28 +14,29 @@
 #define WINDOW_HEIGHT 600
 #define ROTATE_RATE 0.005f
 #define ZOOM_RATE 0.001f
-#define CLOTHRES 3
-#define CLOTH_WIDTH 1
-#define CLOTH_HEIGHT 1
+//#define CLOTHRES 3
+//#define CLOTH_WIDTH 1
+//#define CLOTH_HEIGHT 1
 
 using namespace::cy;
 enum PERSMODE {PERSP, ORTHO};
 PERSMODE perspectiveMode = PERSP;
 int STOP = 1, INCRE = 0;
 
-float bgcolor[3] = { 0.0f,0.0f,1.0f };
+float bgcolor[3] = { 0.0f,0.0f,0.0f };
 int mainWindow, programID, mouseFirstPressed[2] = { 1,1 };
 int mouseState, mouseButton;
 
 float camDist, xAngle, yAngle, t=0;
 Point2f mousePos;
-GLuint MVPID, VAO, VBO;
+GLuint MVPID, VAO, VBO, VBO2;
 Cloth cloth;
 
 /*GLfloat  v_array[9] = {-0.5f, -0.5f, 0,
 					0.5f, -0.5f, 0,
 					0.5f, 0.5f, 0 };*/
-GLfloat v_array[CLOTHRES*CLOTHRES*6*3];
+GLfloat v_array[4 * 3 * 3]; // 4 faces 3 triang each 3 xyz each
+GLfloat c_array[4*3*3]; // 4 faces 3 triang each 3 xyz each
 
 void initGlew() {
 	GLenum res = glewInit();
@@ -83,9 +84,9 @@ void setUniformMVP() {
 
 void initViewMatrices() {
 
-	camDist = 3;
-	xAngle = 1.8;
-	yAngle = -0.0;
+	camDist = 10;
+	xAngle = 1,7;
+	yAngle = -1.7;
 
 	// init & send modelview
 	MVPID = glGetUniformLocation(programID, "MVP");
@@ -96,15 +97,19 @@ void initViewMatrices() {
 
 void init(char* filename) {
 	//select clearing (background) color
-	glClearColor(0.0, 0.0, 0.0, 0.0);
 
+	glEnable(GL_DEPTH_TEST);
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	
 	initGlew();
 	initShader();
 	initViewMatrices();
 
 	// create obj
-	cloth.init(CLOTHRES, CLOTH_WIDTH, CLOTH_HEIGHT);
-	cloth.fill_v_array(v_array);
+	//cloth.init(CLOTHRES, CLOTH_WIDTH, CLOTH_HEIGHT);
+	cloth.initTet();
+	cloth.initTetSetFar();
+	cloth.fill_v_arrayTet(v_array, c_array);
 
 
 	glGenVertexArrays(1, &VAO);
@@ -117,6 +122,11 @@ void init(char* filename) {
 	// (attribute index(pos=0), num of component(xyz=3), type, normalized?, bytes between two instance, attribute offset)
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
+	glGenBuffers(1, &VBO2);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(c_array), c_array, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
 }
 
@@ -172,11 +182,10 @@ void motionFunc(int x, int y) {
 	whenever the window needs to be re-painted. */
 void display() {
 	glClearColor(bgcolor[0], bgcolor[1], bgcolor[2], 1.0f); // Set background color to black and opaque
-	glClear(GL_COLOR_BUFFER_BIT);         // Clear the color buffer
-	glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);         // Clear the color buffer
 	
 	setUniformMVP();
-	glDrawArrays(GL_TRIANGLES, 0, 6*CLOTHRES*CLOTHRES);
+	glDrawArrays(GL_TRIANGLES, 0, 3*4);
 
 
 	glutSwapBuffers();  
@@ -189,17 +198,17 @@ void idle() {
 	//t += 0.01;
 	//cloth.move(t);
 	if (!STOP) {
-		cloth.implicitInt();
+		cloth.integrateTet();
 		//cloth.explicitInt();
-		cloth.incrementStep();
+		cloth.incrementStepTet();
 	}
 	else if (INCRE) {
-		cloth.implicitInt();
-		cloth.incrementStep();
+		cloth.integrateTet();
+		cloth.incrementStepTet();
 		INCRE = 0;
 	}
 	
-	cloth.fill_v_array(v_array);
+	cloth.fill_v_arrayTet(v_array, c_array);
 
 	glBindVertexArray(VAO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);

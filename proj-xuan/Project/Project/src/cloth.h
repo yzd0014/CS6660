@@ -10,7 +10,7 @@
 
 #define K_SPRING 100
 #define H 0.033
-#define G 1
+#define GRAV 1
 
 class Cloth {
 public:
@@ -30,6 +30,9 @@ public:
 	Eigen::MatrixXf L;
 	Eigen::MatrixXf J;
 	Eigen::MatrixXf d;
+
+	Eigen::MatrixXf G;
+	float Wt;
 
 
 	Cloth() {};
@@ -176,7 +179,7 @@ public:
 				}
 
 				// add gravity
-				*getF(i, j) += G * (*getM(i,j)) * cy::Point3f(0,-1,0);
+				*getF(i, j) += GRAV * (*getM(i,j)) * cy::Point3f(0,-1,0);
 			}
 		}
 	}
@@ -193,7 +196,7 @@ public:
 		Y.setZero();
 		M.setZero();
 		g(0, 0) = 0;
-		g(1, 0) = G;
+		g(1, 0) = GRAV;
 		g(2, 0) = 0;
 
 		// construct X Y M
@@ -212,7 +215,7 @@ public:
 
 		
 
-		for (int k = 0; k < 1; k++) {
+		for (int k = 0; k < 10; k++) {
 			// construct d
 			for (int i = 0; i < nume; i++) {
 				Pair tempP(-1, -1);
@@ -316,5 +319,145 @@ public:
 			}
 		}
 	};
+
+	////// tet
+
+	void pushXYZ(float* v_array, int v_index, cyPoint3f a) {
+		v_array[v_index] = a.x;
+		v_array[v_index+1] = a.y;
+		v_array[v_index+2] = a.z;
+	}
+
+	void initTet() {
+		x = new cyPoint3f[4];
+		x_origin = new cyPoint3f[4];
+		x_new = new cyPoint3f[4];
+		x_last = new cyPoint3f[4];
+		
+		x[0] = cyPoint3f(-1, -1, -1);
+		x[1] = cyPoint3f(1, -1, -1);
+		x[2] = cyPoint3f(0, 1, -1);
+		x[3] = cyPoint3f(0, 0, 1);
+
+		for (int i = 0; i < 4; i++) {
+			x_last[i] = x[i];
+		}
+
+		initTetMat();
+	}
+
+
+	void initTetMat() {
+		Eigen::MatrixXf Dm;
+		Eigen::MatrixXf L_loc;
+
+		Dm.resize(3,3);
+		L.resize(4,3);
+		cyPoint3f e[3];
+
+		e[0] = x[0] - x[3];
+		e[1] = x[1] - x[3];
+		e[2] = x[2] - x[3];
+		Dm(0, 0) = e[0].x; Dm(0, 1) = e[1].x; Dm(0, 2) = e[2].x;
+		Dm(1, 0) = e[0].y; Dm(1, 1) = e[1].y; Dm(1, 2) = e[2].y;
+		Dm(2, 0) = e[0].z; Dm(2, 1) = e[1].z; Dm(2, 2) = e[2].z;
+
+		L.setZero();
+		L(0, 0) = 1;
+		L(1, 1) = 1;
+		L(2, 2) = 1;
+		L(3, 0) = -1;
+		L(3, 1) = -1;
+		L(3, 2) = -1;
+
+		Wt = abs(Dm.determinant() / 6.0);
+
+		G = L * Dm.inverse();
+
+		std::cout <<"\n"<< "L" << std::endl;
+		std::cout << L << std::endl;
+		std::cout << "\n" << "Dm" << std::endl;
+		std::cout << Dm << std::endl;
+		std::cout << "\n" << "G" << std::endl;
+		std::cout << G << std::endl;
+		std::cout << "\n" << "Wt " <<Wt<< std::endl;
+	}
+
+	void initTetSetFar() {
+		x[3].z += 1;
+	}
+
+	void integrateTet() {
+		Eigen::MatrixXf X, Y, I;
+		X.resize(3, 4);
+		Y.resizeLike(X);
+		I.resize(4, 4);
+		X.setZero();
+		Y.setZero();
+		I.setIdentity();
+
+		// construct X Y 
+		for (int i = 0; i < 4; i++) {
+			X(0, i) = x[i].x;
+			X(1, i) = x[i].y;
+			X(2, i) = x[i].z;
+
+			Y(0, i) = 2 * x[i].x - x_last[i].x;
+			Y(1, i) = 2 * x[i].y - x_last[i].y;
+			Y(2, i) = 2 * x[i].z - x_last[i].z;
+		}
+		Wt = 1000;
+
+		X = (Y * I/ (H * H) + G.transpose()*Wt)*( I/(H*H) + Wt*G*G.transpose()).inverse();
+
+		for (int i = 0; i < 4; i++) {
+			x_new[i].x = X(0, i);
+			x_new[i].y = X(1, i);
+			x_new[i].z = X(2, i);
+		}
+	}
+
+	void incrementStepTet() {
+		for (int i = 0; i <3 ; i++) {
+			x_last[i] = x[i];
+			x[i] = x_new[i];			
+		}
+	}
+
+	void fill_v_arrayTet(float* v_array, float* c_array) {
+		pushXYZ(v_array, 0, x[0]);
+		pushXYZ(v_array, 3, x[1]);
+		pushXYZ(v_array, 6, x[2]);
+
+		pushXYZ(v_array, 9, x[0]);
+		pushXYZ(v_array, 12, x[1]);
+		pushXYZ(v_array, 15, x[3]);
+
+		pushXYZ(v_array, 18, x[0]);
+		pushXYZ(v_array, 21, x[2]);
+		pushXYZ(v_array, 24, x[3]);
+
+		pushXYZ(v_array, 27, x[1]);
+		pushXYZ(v_array, 30, x[2]);
+		pushXYZ(v_array, 33, x[3]);
+
+
+		pushXYZ(c_array, 0, cyPoint3f(1, 1, 1));
+		pushXYZ(c_array, 3, cyPoint3f(1, 1, 1));
+		pushXYZ(c_array, 6, cyPoint3f(1, 1, 1));
+
+		pushXYZ(c_array, 9, cyPoint3f(1, 1, 0));
+		pushXYZ(c_array, 12, cyPoint3f(1, 1, 0));
+		pushXYZ(c_array, 15, cyPoint3f(1, 1, 0));
+		
+		pushXYZ(c_array, 18, cyPoint3f(0, 1, 0));
+		pushXYZ(c_array, 21, cyPoint3f(0, 1, 0));
+		pushXYZ(c_array, 24, cyPoint3f(0, 1, 0));
+
+		pushXYZ(c_array, 27, cyPoint3f(0, 1, 1));
+		pushXYZ(c_array, 30, cyPoint3f(0, 1, 1));
+		pushXYZ(c_array, 33, cyPoint3f(0, 1, 1));
+
+	}
 
 };
