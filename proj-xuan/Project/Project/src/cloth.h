@@ -31,6 +31,7 @@ public:
 	Eigen::MatrixXf J;
 	Eigen::MatrixXf d;
 
+	Eigen::MatrixXf Dm;
 	Eigen::MatrixXf G;
 	float Wt;
 
@@ -348,8 +349,6 @@ public:
 
 
 	void initTetMat() {
-		Eigen::MatrixXf Dm;
-		Eigen::MatrixXf L_loc;
 
 		Dm.resize(3,3);
 		L.resize(4,3);
@@ -396,7 +395,13 @@ public:
 		Y.setZero();
 		I.setIdentity();
 
-		// construct X Y 
+		Eigen::MatrixXf m_vec,g;
+		m_vec.resize(1, 4);
+		g.resize(3, 1);
+		g(0, 0) = 0;
+		g(2, 0) = GRAV;
+		g(1, 0) = 0;
+		// construct X Y M
 		for (int i = 0; i < 4; i++) {
 			X(0, i) = x[i].x;
 			X(1, i) = x[i].y;
@@ -405,10 +410,20 @@ public:
 			Y(0, i) = 2 * x[i].x - x_last[i].x;
 			Y(1, i) = 2 * x[i].y - x_last[i].y;
 			Y(2, i) = 2 * x[i].z - x_last[i].z;
-		}
-		Wt = 1000;
 
-		X = (Y * I/ (H * H) + G.transpose()*Wt)*( I/(H*H) + Wt*G*G.transpose()).inverse();
+			m_vec(0, i) = Wt / 4;
+		}
+		//Wt = 1000;
+		//for (int k = 0; k < 10; k++) {
+			// construct d
+			Eigen::MatrixXf E;
+			E.resize(3, 3);
+			E(0, 0) = X(0, 0) - X(0, 3); E(0, 1) = X(0, 1) - X(0, 3); E(0, 2) = X(0, 2) - X(0, 3);
+			E(1, 0) = X(1, 0) - X(1, 3); E(1, 1) = X(1, 1) - X(1, 3); E(1, 2) = X(1, 2) - X(1, 3);
+			E(2, 0) = X(2, 0) - X(2, 3); E(2, 1) = X(2, 1) - X(2, 3); E(2, 2) = X(2, 2) - X(2, 3);
+			float d = abs(E.determinant() - Wt);
+			X = (Y * I / (H * H) + G.transpose()*Wt - g* m_vec)*(I / (H*H) + Wt * G*G.transpose()).inverse();
+		//}
 
 		for (int i = 0; i < 4; i++) {
 			x_new[i].x = X(0, i);

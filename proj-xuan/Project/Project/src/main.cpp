@@ -85,7 +85,7 @@ void setUniformMVP() {
 void initViewMatrices() {
 
 	camDist = 10;
-	xAngle = 1,7;
+	xAngle = 1.7;
 	yAngle = -1.7;
 
 	// init & send modelview

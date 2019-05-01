@@ -1,22 +1,17 @@
 ﻿  main.cpp
 c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(7): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(151): warning C4244: '+=': conversion from 'double' to 'TYPE', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(152): warning C4244: '+=': conversion from 'double' to 'TYPE', possible loss of data
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(172): warning C4018: '<': signed/unsigned mismatch
-c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(253): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
-          with
-          [
-              TYPE=float
-          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(173): warning C4018: '<': signed/unsigned mismatch
 c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(254): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(267): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(255): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
           with
           [
               TYPE=float
@@ -26,12 +21,18 @@ c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src
           [
               TYPE=float
           ]
-c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(373): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(269): warning C4305: 'argument': truncation from 'double' to 'const TYPE'
+          with
+          [
+              TYPE=float
+          ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\cloth.h(372): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(74): warning C4305: 'argument': truncation from 'double' to 'TYPE'
           with
           [
               TYPE=float
           ]
+c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(88): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(89): warning C4305: '=': truncation from 'double' to 'float'
 c:\users\admx\documents\cs6660\project-repo\cs6660\proj-xuan\project\project\src\main.cpp(151): warning C4244: 'argument': conversion from 'int' to 'TYPE', possible loss of data
           with
