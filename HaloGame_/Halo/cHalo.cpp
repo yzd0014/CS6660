@@ -50,17 +50,17 @@ eae6320::cResult eae6320::cHalo::Initialize()
 	//create two meshes 	
 	eae6320::Assets::cHandle<Mesh> mesh_plane;
 	//eae6320::Assets::cHandle<Mesh> mesh_cloth;
-	eae6320::Assets::cHandle<Mesh> mesh_tri;
+	eae6320::Assets::cHandle<Mesh> mesh_cloth;
 
 	auto result = eae6320::Results::Success;
 	if (!(result = Mesh::s_manager.Load("data/meshes/square_plane.mesh", mesh_plane))) {
 		EAE6320_ASSERT(false);
 	}
-	if (!(result = Mesh::s_manager.Load("data/meshes/tri.mesh", mesh_tri))) {
+	if (!(result = Mesh::s_manager.Load("data/meshes/cloth10x10.mesh", mesh_cloth))) {
 		EAE6320_ASSERT(false);
 	}
 	masterMeshArray.push_back(mesh_plane);
-	masterMeshArray.push_back(mesh_tri);
+	masterMeshArray.push_back(mesh_cloth);
 	
 	//create two effect
 	Effect* pEffect_white;
@@ -78,7 +78,7 @@ eae6320::cResult eae6320::cHalo::Initialize()
 	
 	{
 		Physics::sRigidBodyState objState;
-		objState.position = Math::sVector(0.0f, 0.0f, 0.0f);
+		objState.position = Math::sVector(0.0f, 0.0f, 20.0f);
 		objState.boundingBox.center = Math::sVector(0.0f, 0.0f, 0.0f);
 		objState.boundingBox.extends = Math::sVector(4.0f, 0.0f, 4.0f);
 		GameCommon::GameObject * pGameObject = new GameCommon::GameObject(pEffect_white, mesh_plane, objState);
@@ -86,12 +86,18 @@ eae6320::cResult eae6320::cHalo::Initialize()
 		masterGameObjectArr.push_back(pGameObject);
 	}
 	
-	//add tri
+	//add cloth
 	{
+		/*
 		Physics::sRigidBodyState objState;
 		objState.position = Math::sVector(0.0f, 2.0f, 0.0f);
 		GameCommon::GameObject * pGameObject = new Tri(pEffect_white, mesh_tri, objState, GetSimulationUpdatePeriod_inSeconds());
 		gameOjbectsWithoutCollider.push_back(pGameObject);	
+		*/
+		Physics::sRigidBodyState objState;
+		objState.position = Math::sVector(0.0f, 6.0f, 0.0f);
+		GameCommon::GameObject * pGameObject = new Cloth(pEffect_white, mesh_cloth, objState, GetSimulationUpdatePeriod_inSeconds());
+		gameOjbectsWithoutCollider.push_back(pGameObject);
 	}
 
 	return Results::Success;

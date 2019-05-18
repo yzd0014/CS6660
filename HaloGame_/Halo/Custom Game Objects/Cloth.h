@@ -2,7 +2,8 @@
 #include "Engine/GameCommon/GameObject.h"
 #include "Engine/Math/Functions.h"
 #include "Engine/Math/cMatrix_transformation.h"
-#include "Eigen/Dense"
+//#include "Eigen/Dense"
+#include "Engine/EigenLibrary/Eigen/Dense"
 
 using namespace Eigen;
 namespace eae6320 {
@@ -19,7 +20,7 @@ namespace eae6320 {
 			edgeCount = (2 * clothResolution + 1)*clothResolution + clothResolution;
 
 			//rotate cloth to make it parallel to ground
-			Math::cMatrix_transformation rotMatrix(Math::cQuaternion(Math::ConvertDegreesToRadians(-90), Math::sVector(1, 0, 0)), Math::sVector(0.0f, 0.0f, 0.0f));
+			Math::cMatrix_transformation rotMatrix(Math::cQuaternion(Math::ConvertDegreesToRadians(-60), Math::sVector(1, 0, 0)), Math::sVector(0.0f, 0.0f, 0.0f));
 			for (uint16_t i = 0; i < clothMesh->GetVerticesCount(); i++) {
 				Math::sVector oldPos, newPos;
 				oldPos.x = clothMesh->m_pVertexDataInRAM[i].x;
@@ -116,6 +117,8 @@ namespace eae6320 {
 			
 			Vector3d g(0.0f, 5.0f, 0.0f);
 			restMat = t * P - g * m;
+
+			timeConstant = 1 / pow(i_h, 2);
 		}
 		void EventTick(const float i_secondCountToIntegrate) override;
 		~Cloth() {
@@ -126,7 +129,8 @@ namespace eae6320 {
 		Math::sVector fixedPos[11];
 	private:
 		float totalElapsedSimulationTime;
-		float h;//time difference
+		float h;
+		float timeConstant;
 		int verticeCount;
 		int clothResolution;
 		int edgeCount;
